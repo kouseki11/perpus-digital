@@ -70,7 +70,14 @@ class ReviewController extends Controller
      */
     public function update(Request $request, Review $review)
     {
-        //
+        $request->validate([
+            'review' => 'required',
+            'rating' => 'required',
+        ]);
+
+        $review->update($request->all());
+
+        return redirect()->back()->with('success', 'Review created successfully!');
     }
 
     /**

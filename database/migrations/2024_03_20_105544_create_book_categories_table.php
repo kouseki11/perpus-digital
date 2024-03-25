@@ -13,6 +13,8 @@ return new class extends Migration
     {
         Schema::create('book_categories', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('book_id');
+            $table->foreignId('category_id');
             $table->timestamps();
         });
     }

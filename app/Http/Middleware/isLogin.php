@@ -4,9 +4,10 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
 
-class isAdmin
+class isLogin
 {
     /**
      * Handle an incoming request.
@@ -15,9 +16,9 @@ class isAdmin
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if(Auth()->user()->hasRole('administrator')) {
+        if(Auth::check()) {
             return $next($request);
         }
-        return redirect('/books')->with('err', 'You not administartor');
+        return redirect('/login')->with('err', 'Please Login First');
     }
 }

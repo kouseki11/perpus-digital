@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Book;
 use App\Models\BookCategory;
 use Illuminate\Http\Request;
 
@@ -26,9 +27,20 @@ class BookCategoryController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(Request $request, Book $book)
     {
-        //
+        $request->validate([
+            'category_id' => 'required'
+        ]);
+
+        $book_id = $book->id;
+
+        BookCategory::create([
+            'book_id' => $book_id,
+            'category_id' => $request->category_id
+        ]);
+
+        return redirect()->back()->with('success', 'Category set successfully.');
     }
 
     /**

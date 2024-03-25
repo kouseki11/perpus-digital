@@ -12,7 +12,7 @@ class Book extends Model
     protected $guarded = ['id'];
 
     public function category() {
-        return $this->belongsTo(Category::class);
+        return $this->belongsToMany(Category::class, 'book_categories');
     }
 
     public function loan() {
@@ -25,9 +25,5 @@ class Book extends Model
 
     public function collection() {
         return $this->hasMany(Collection::class);
-    }
-
-    public function BookCategory() {
-        return $this->hasMany(BookCategory::class);
     }
 }

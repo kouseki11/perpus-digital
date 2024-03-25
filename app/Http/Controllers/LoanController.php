@@ -85,4 +85,15 @@ class LoanController extends Controller
     {
         $loan->delete();
     }
+
+    public function loaned(Request $request, Loan $loan)
+    {
+    
+        $loan->update([
+            'status' => 'loaned',
+            'return_date' => now()
+        ]);
+
+        return redirect()->back()->with('success', 'Book loaned successfully!');
+    }
 }

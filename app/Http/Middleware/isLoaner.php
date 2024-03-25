@@ -6,7 +6,7 @@ use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class isAdmin
+class isLoaner
 {
     /**
      * Handle an incoming request.
@@ -15,9 +15,9 @@ class isAdmin
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if(Auth()->user()->hasRole('administrator')) {
+        if(Auth()->user()->hasRole('loaner')) {
             return $next($request);
         }
-        return redirect('/books')->with('err', 'You not administartor');
+        return redirect('/dashboard')->with('err', 'You not loaner');
     }
 }

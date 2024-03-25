@@ -17,7 +17,8 @@ class BookAdminController extends Controller
     public function index()
     {
         $books = Book::all();
-        return view('admin.books.index', compact('books'));
+        $categories = Category::all();
+        return view('admin.books.index', compact('books', 'categories'));
     }
 
     /**
@@ -25,8 +26,7 @@ class BookAdminController extends Controller
      */
     public function create()
     {
-        $categories= Category::all();
-        return view ('admin.books.create', compact('categories'));
+        return view('admin.books.create');
     }
 
     /**
@@ -39,12 +39,11 @@ class BookAdminController extends Controller
                 'title' => 'required',
                 'author' => 'required',
                 'publisher' => 'required',
-                'category_id' => 'required',
                 'release_date' => 'required',
                 'synopsis' => 'required|max:1317',
                 'cover' => 'required|max:5048',
             ]);
-    
+
             $image = $request->file('cover');
 
             if ($image) {
@@ -52,21 +51,19 @@ class BookAdminController extends Controller
                 $image->move(public_path('cover_images'), $imageName);
                 $imagePost = $imageName;
             }
-    
+
             $imagePost = 'cover_images/' . $imagePost;
-    
+
             Book::create([
                 'title' => $request->title,
                 'author' => $request->author,
-                'category_id' => $request->category_id,
                 'publisher' => $request->publisher,
                 'release_date' => $request->release_date,
                 'synopsis' => $request->synopsis,
                 'cover' => $imagePost
             ]);
-    
-            return redirect()->route('books.index')->with('success', 'Book created successfully.');
 
+            return redirect()->route('books.index')->with('success', 'Book created successfully.');
         } catch (Exception $e) {
             dd($e);
         }

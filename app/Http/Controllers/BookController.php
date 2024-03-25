@@ -42,9 +42,11 @@ class BookController extends Controller
      */
     public function show(Book $book)
     {
-        $loans = Loan::where('book_id', $book->id)->orWhere('user_id', Auth::user()->id)->first();
+        $loans = $book->loan()->where('user_id', Auth::user()->id)->latest()->first();
         $reviews = $book->review;
-        return view('books.show', compact('book', 'loans', 'reviews'));
+        $reviewee = $book->review()->where('user_id', Auth::user()->id)->first();
+        // dd($reviewee);
+        return view('books.show', compact('book', 'loans', 'reviews', 'reviewee'));
     }
 
     /**

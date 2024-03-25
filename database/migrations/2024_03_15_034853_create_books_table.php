@@ -18,7 +18,6 @@ return new class extends Migration
             $table->string('publisher');
             $table->date('release_date');
             $table->text('synopsis');
-            $table->foreignId('category_id')->nullable();
             $table->text('cover')->nullable();
             $table->timestamps();
         });
