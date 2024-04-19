@@ -69,7 +69,6 @@ class LoanController extends Controller
      */
     public function update(Request $request, Loan $loan)
     {
-    
         $loan->update([
             'status' => 'returned',
             'return_date' => now()

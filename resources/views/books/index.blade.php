@@ -72,6 +72,7 @@
                             </svg>
                         </a>
                         @if(Auth::user()->hasRole('loaner'))
+                        @if(!$book->id == Auth::user()->collection->contains('book_id', $book->id))
                         <form method="POST" action="{{ route('collections.store', $book->id) }}">
                             @csrf
                         <button type="submit"
@@ -85,6 +86,36 @@
                             Add Collection
                         </button>
                         </form>
+                        @endif
+                        @endif
+                    </div>
+                    <div class="flex gap-4 mt-2">
+                        @php
+                            $loans = $book->loan()->whereHas('user', function ($query) {
+                                $query->where('id', Auth::user()->id);
+                            })->with('user')->latest()->first();
+                        @endphp
+                        @if (Auth::user()->hasRole('loaner'))
+                        <form method="post" action="{{ route('loans.store', $book->id) }}">
+                            @csrf
+                            <button type="submit"
+                                {{ $loans == null || $loans->status == 'returned' ? '' : 'disabled' }}
+                                class="{{ $loans == null || $loans->status == 'returned' ? 'text-white focus:ring-4 bg-blue-700 font-medium rounded-lg text-sm px-5 py-2.5 text-center ' : 'text-white focus:ring-4 bg-blue-400 font-medium rounded-lg text-sm px-5 py-2.5 text-center' }}">
+                                Loan
+                            </button>
+                        </form>
+                        @if ($loans)
+                            @if ($loans->status == 'loaned')
+                                <form method="POST" action="{{ route('loans.update', $loans->id) }}">
+                                    @csrf
+                                    @method('put')
+                                    <button type="submit"
+                                        class="text-white bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2">
+                                        Return
+                                    </button>
+                                </form>
+                            @endif
+                        @endif
                         @endif
                     </div>
                 </div>

@@ -58,16 +58,36 @@
                         {{ Str::limit($collection->book->synopsis, 100, '...') }}
                     </p>
                     <div class="flex justify-center gap-4">
-                        <form method="POST" action="{{ route('loans.store', $collection->book->id) }}">
-                            @csrf
+                    @php
+                        $loans = $collection->book->loan()->whereHas('user', function ($query) {
+                            $query->where('id', Auth::user()->id);
+                        })->with('user')->latest()->first();
+                    @endphp
+                    @if (Auth::user()->hasRole('loaner'))
+                    <form method="post" action="{{ route('loans.store', $collection->book->id) }}">
+                        @csrf
                         <button type="submit"
-                            class="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-yellow-700 rounded-lg hover:bg-yellow-800 focus:ring-4 focus:outline-none focus:ring-yellow-300 dark:bg-yellow-600 dark:hover:bg-yellow-700 dark:focus:ring-yellow-800">
+                            {{ $loans == null || $loans->status == 'returned' ? '' : 'disabled' }}
+                            class="{{ $loans == null || $loans->status == 'returned' ? 'inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-yellow-700 rounded-lg hover:bg-yellow-800 focus:ring-4 focus:outline-none focus:ring-yellow-300 dark:bg-yellow-600 dark:hover:bg-yellow-700 dark:focus:ring-yellow-800' : 'inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-yellow-100 rounded-lg focus:ring-4 focus:outline-none focus:ring-yellow-100 dark:bg-yellow-100 dark:focus:ring-yellow-100' }}">
                             <svg class="w-6 h-6 text-white dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                                 <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 11v5m0 0 2-2m-2 2-2-2M3 6v1a1 1 0 0 0 1 1h16a1 1 0 0 0 1-1V6a1 1 0 0 0-1-1H4a1 1 0 0 0-1 1Zm2 2v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V8H5Z"/>
                               </svg>                              
                             Loan
                         </button>
-                        </form>
+                    </form>
+                    @if ($loans)
+                        @if ($loans->status == 'loaned')
+                            <form method="POST" action="{{ route('loans.update', $loans->id) }}">
+                                @csrf
+                                @method('put')
+                                <button type="submit"
+                                    class="text-white bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2">
+                                    Return
+                                </button>
+                            </form>
+                        @endif
+                    @endif
+                    @endif
                     </div>
                 </div>
             </div>

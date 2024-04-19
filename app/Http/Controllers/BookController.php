@@ -17,8 +17,9 @@ class BookController extends Controller
     public function index()
     {
         $books = Book::all();
+        $loan = Loan::all();
         $categories = Category::all();
-        return view('books.index', compact('books', 'categories'));
+        return view('books.index', compact('books', 'categories', 'loan'));
     }
 
     /**
